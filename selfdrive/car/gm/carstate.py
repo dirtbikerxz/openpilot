@@ -52,7 +52,7 @@ class CarState(CarStateBase):
       self.user_gas_pressed = self.user_gas > 20 # this works because interceptor read < 0 when pedal position is 0. Once calibrated, this will change
       ret.gasPressed = self.user_gas_pressed
       #workaround for insta-disengage
-      ret.gasPressed = False
+      #ret.gasPressed = False
     else:
       ret.gasPressed = ret.gas > 1e-5
 

@@ -177,9 +177,9 @@ class CarInterface(CarInterfaceBase):
           be.type = ButtonType.accelCruise # Suppress resume button if we're resuming from stop so we don't adjust speed.
       elif but == CruiseButtons.DECEL_SET:
         be.type = ButtonType.decelCruise
-      elif but == CruiseButtons.CANCEL:
-        if not ret.enableGasInterceptor: #need to use cancel to disable cc with Pedal
-          be.type = ButtonType.cancel
+      # elif but == CruiseButtons.CANCEL:
+      #   if not ret.enableGasInterceptor: #need to use cancel to disable cc with Pedal
+      #     be.type = ButtonType.cancel
       elif but == CruiseButtons.MAIN:
         be.type = ButtonType.altButton3
       buttonEvents.append(be)

@@ -55,18 +55,32 @@ class CarInterface(CarInterfaceBase):
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
 
     elif candidate == CAR.BOLT:
-      # initial engage unkown - copied from Volt. Stop and go unknown.
       ret.minEnableSpeed = 25 * CV.MPH_TO_MS
       ret.mass = 1616. + STD_CARGO_KG
       ret.safetyModel = car.CarParams.SafetyModel.gm
       ret.wheelbase = 2.60096
-      ret.steerRatio = 16.8
+      ret.steerRatio = 18.0
       ret.steerRatioRear = 0.
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
-      #Thanks Kish
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.01]]
-      ret.lateralTuning.pid.kf = 0.000045
+      #ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.,41.0], [0.,41.0]]
+      #ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.1,0.24], [0.01,0.019]]
+      #ret.lateralTuning.pid.kf = 0.000038
+
+      #-----------------------------------------------------------------------------
+      # INDI
+      #-----------------------------------------------------------------------------
+      # timeconstant is smoothing. Higher values == more smoothing
+      # actuatoreffectiveness is how much it steers. Lower values == more steering
+      # outer and inner are gains. Higher values = more steering
+      #
+      ret.steerActuatorDelay = 0.5
+      ret.lateralTuning.init('indi')
+      ret.lateralTuning.indi.innerLoopGain = 5.0
+      ret.lateralTuning.indi.outerLoopGain = 4.2
+      ret.lateralTuning.indi.timeConstant = 1.8
+      ret.lateralTuning.indi.actuatorEffectiveness = 2.0
+
+      tire_stiffness_factor = 1.0
 
     elif candidate == CAR.MALIBU:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -162,7 +176,8 @@ class CarInterface(CarInterfaceBase):
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     buttonEvents = []
-
+    
+    no_pedal = not hasattr(ret,'enableGasInterceptor') or (hasattr(ret,'enableGasInterceptor') and not ret.enableGasInterceptor)
     if self.CS.cruise_buttons != self.CS.prev_cruise_buttons and self.CS.prev_cruise_buttons != CruiseButtons.INIT:
       be = car.CarState.ButtonEvent.new_message()
       be.type = ButtonType.unknown
@@ -177,9 +192,9 @@ class CarInterface(CarInterfaceBase):
           be.type = ButtonType.accelCruise # Suppress resume button if we're resuming from stop so we don't adjust speed.
       elif but == CruiseButtons.DECEL_SET:
         be.type = ButtonType.decelCruise
-      # elif but == CruiseButtons.CANCEL:
-      #   if not ret.enableGasInterceptor: #need to use cancel to disable cc with Pedal
-      #     be.type = ButtonType.cancel
+      elif but == CruiseButtons.CANCEL:
+        if no_pedal: #need to use cancel to disable cc with Pedal
+          be.type = ButtonType.cancel
       elif but == CruiseButtons.MAIN:
         be.type = ButtonType.altButton3
       buttonEvents.append(be)
@@ -201,9 +216,9 @@ class CarInterface(CarInterfaceBase):
       if self.CS.park_brake:
         events.append(create_event('parkBrake', [ET.NO_ENTRY, ET.USER_DISABLE]))
       # disable on pedals rising edge or when brake is pressed and speed isn't zero
-      # if (ret.gasPressed and not self.gas_pressed_prev) or \
-      #   (ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001)):
-      #   events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
+      if (ret.gasPressed and not self.gas_pressed_prev and no_pedal) or \
+        (ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001)):
+        events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
       if ret.cruiseState.standstill:
         events.append(create_event('resumeRequired', [ET.WARNING]))
       if not self.CS.car_fingerprint in NO_ASCM_CARS:

@@ -7,17 +7,17 @@ chmod 777 /dev/shm
 add_subtree() {
   echo "[-] adding $2 subtree T=$SECONDS"
   if [ -d "$2" ]; then
-    if git subtree pull --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash -m "Merge $2 subtree"; then
+    if git subtree pull --prefix "$2" https://github.com/jasonjshuler/"$1".git "$3" --squash -m "Merge $2 subtree"; then
       echo "git subtree pull succeeds"
     else
       echo "git subtree pull failed, fixing"
       git merge --abort || true
       git rm -r $2
       git commit -m "Remove old $2 subtree"
-      git subtree add --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash
+      git subtree add --prefix "$2" https://github.com/jasonjshuler/"$1".git "$3" --squash
     fi
   else
-    git subtree add --prefix "$2" https://github.com/commaai/"$1".git "$3" --squash
+    git subtree add --prefix "$2" https://github.com/jasonjshuler/"$1".git "$3" --squash
   fi
 }
 
@@ -26,10 +26,10 @@ TARGET_DIR=/data/openpilot
 
 ln -sf $TARGET_DIR /data/pythonpath
 
-export GIT_COMMITTER_NAME="Vehicle Researcher"
-export GIT_COMMITTER_EMAIL="user@comma.ai"
-export GIT_AUTHOR_NAME="Vehicle Researcher"
-export GIT_AUTHOR_EMAIL="user@comma.ai"
+export GIT_COMMITTER_NAME="Jason Shuler"
+export GIT_COMMITTER_EMAIL="jshuler@gmail.com"
+export GIT_AUTHOR_NAME="Jason Shuler"
+export GIT_AUTHOR_EMAIL="jshuler@gmail.com"
 export GIT_SSH_COMMAND="ssh -i /tmp/deploy_key"
 
 echo "[-] Setting up repo T=$SECONDS"
@@ -37,7 +37,7 @@ if [ ! -d "$TARGET_DIR" ]; then
     mkdir -p $TARGET_DIR
     cd $TARGET_DIR
     git init
-    git remote add origin git@github.com:commaai/openpilot.git
+    git remote add origin jshuler@gmail.com:jasonjshuler/openpilot.git
 fi
 
 

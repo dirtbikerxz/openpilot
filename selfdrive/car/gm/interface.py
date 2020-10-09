@@ -44,7 +44,7 @@ class CarInterface(CarInterfaceBase):
     ret.enableGasInterceptor = 0x201 in fingerprint[0]
     #TODO: this should be case based
     if ret.enableGasInterceptor:
-      ret.radarOffCan = True
+      ret.radarOffCan = False
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)

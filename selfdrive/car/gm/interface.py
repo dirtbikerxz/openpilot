@@ -43,7 +43,7 @@ class CarInterface(CarInterfaceBase):
     ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
     ret.enableGasInterceptor = 0x201 in fingerprint[0]
     #TODO: this should be case based
-    if ret.enableGasInterceptor
+    if ret.enableGasInterceptor:
       ret.radarOffCan = True
 
     if candidate == CAR.VOLT:
@@ -57,7 +57,7 @@ class CarInterface(CarInterfaceBase):
 
     elif candidate == CAR.BOLT:
       ret.minEnableSpeed = 25 * CV.MPH_TO_MS
-      if ret.enableGasInterceptor
+      if ret.enableGasInterceptor:
         ret.minEnableSpeed = 5 * CV.MPH_TO_MS #steering works down to 5mph; pedal to 0
       ret.mass = 1616. + STD_CARGO_KG
       ret.safetyModel = car.CarParams.SafetyModel.gm

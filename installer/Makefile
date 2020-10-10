@@ -92,7 +92,7 @@ installer_openpilot.o: installer.c
 	$(CC) $(CFLAGS) -MMD \
           -I.. -I../selfdrive \
           -DBRAND=openpilot \
-					-DBRANCH=release2 \
+					-DBRANCH="master-ci" \
           -c -o '$@' '$<'
 
 installer_dashcam.o: installer.c

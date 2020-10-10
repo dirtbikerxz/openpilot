@@ -485,7 +485,7 @@ non_public_routes = [
 ]
 
 # TODO: add routes for these cars
-non_tested_cars = [TOYOTA.LEXUS_CTH, CHRYSLER.PACIFICA_2018, GM.BOLT, GM.EQUINOX]
+non_tested_cars = [TOYOTA.LEXUS_CTH, CHRYSLER.PACIFICA_2018, GM.BOLT, GM.EQUINOX, GM.TAHOE]
 
 if __name__ == "__main__":
 

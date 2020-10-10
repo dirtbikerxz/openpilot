@@ -41,6 +41,10 @@ class CarInterface(CarInterfaceBase):
     ret.lateralTuning.pid.kf = 0.00004   # full torque for 20 deg at 80mph means 0.00007818594
     ret.steerRateCost = 1.0
     ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
+    ret.enableGasInterceptor = 0x201 in fingerprint[0]
+    #TODO: this should be case based
+    if ret.enableGasInterceptor:
+      ret.radarOffCan = False
 
     if candidate == CAR.VOLT:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -52,18 +56,32 @@ class CarInterface(CarInterfaceBase):
       ret.centerToFront = ret.wheelbase * 0.4 # wild guess
 
     elif candidate == CAR.BOLT:
-      # initial engage unkown - copied from Volt. Stop and go unknown.
       ret.minEnableSpeed = 25 * CV.MPH_TO_MS
+      if ret.enableGasInterceptor:
+        ret.minEnableSpeed = 5 * CV.MPH_TO_MS #steering works down to 5mph; pedal to 0
       ret.mass = 1616. + STD_CARGO_KG
       ret.safetyModel = car.CarParams.SafetyModel.gm
       ret.wheelbase = 2.60096
       ret.steerRatio = 16.8
       ret.steerRatioRear = 0.
-      ret.centerToFront = ret.wheelbase * 0.4 # wild guess
-      #Thanks Kish
-      ret.lateralTuning.pid.kiBP, ret.lateralTuning.pid.kpBP = [[0.], [0.]]
-      ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.3], [0.01]]
-      ret.lateralTuning.pid.kf = 0.000045
+      ret.centerToFront = 2.0828 #ret.wheelbase * 0.4 # wild guess
+
+      #-----------------------------------------------------------------------------
+      # INDI
+      #-----------------------------------------------------------------------------
+      # timeconstant is smoothing. Higher values == more smoothing
+      # actuatoreffectiveness is how much it steers. Lower values == more steering
+      # outer and inner are gains. Higher values = more steering
+      #
+      # JJS - removing tuning as it was causing lane crossing
+      #ret.steerActuatorDelay = 0.15
+      #ret.lateralTuning.init('indi')
+      #ret.lateralTuning.indi.innerLoopGain = 4.57 # rate error gain
+      #ret.lateralTuning.indi.outerLoopGain = 13.1 # error gain
+      #ret.lateralTuning.indi.timeConstant = 5.5
+      #ret.lateralTuning.indi.actuatorEffectiveness = 6.79
+
+      tire_stiffness_factor = 1.0
 
     elif candidate == CAR.MALIBU:
       # supports stop and go, but initial engage must be above 18mph (which include conservatism)
@@ -168,7 +186,7 @@ class CarInterface(CarInterfaceBase):
     ret.steeringRateLimited = self.CC.steer_rate_limited if self.CC is not None else False
 
     buttonEvents = []
-
+    
     if self.CS.cruise_buttons != self.CS.prev_cruise_buttons and self.CS.prev_cruise_buttons != CruiseButtons.INIT:
       be = car.CarState.ButtonEvent.new_message()
       be.type = ButtonType.unknown
@@ -184,7 +202,8 @@ class CarInterface(CarInterfaceBase):
       elif but == CruiseButtons.DECEL_SET:
         be.type = ButtonType.decelCruise
       elif but == CruiseButtons.CANCEL:
-        be.type = ButtonType.cancel
+        if not self.CP.enableGasInterceptor: #need to use cancel to disable cc with Pedal
+          be.type = ButtonType.cancel
       elif but == CruiseButtons.MAIN:
         be.type = ButtonType.altButton3
       buttonEvents.append(be)
@@ -206,8 +225,8 @@ class CarInterface(CarInterfaceBase):
       if self.CS.park_brake:
         events.append(create_event('parkBrake', [ET.NO_ENTRY, ET.USER_DISABLE]))
       # disable on pedals rising edge or when brake is pressed and speed isn't zero
-      if (ret.gasPressed and not self.gas_pressed_prev) or \
-        (ret.brakePressed): # and (not self.brake_pressed_prev or ret.vEgo > 0.001)):
+      if (ret.gasPressed and not self.gas_pressed_prev and not self.CP.enableGasInterceptor) or \
+        (ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001)):
         events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
       if ret.cruiseState.standstill:
         events.append(create_event('resumeRequired', [ET.WARNING]))
@@ -243,7 +262,11 @@ class CarInterface(CarInterfaceBase):
 
     # For Openpilot, "enabled" includes pre-enable.
     # In GM, PCM faults out if ACC command overlaps user gas.
-    enabled = c.enabled and not self.CS.out.gasPressed
+    # jjs disabling for now as we have no ACC
+
+    #todo: see if we can make conditional on pedal
+    # enabled = c.enabled and not self.CS.out.gasPressed
+    enabled = c.enabled
 
     can_sends = self.CC.update(enabled, self.CS, self.frame, \
                                c.actuators,

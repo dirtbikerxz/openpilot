@@ -1,1 +1,1 @@
-#define COMMA_VERSION "0.7.4-gm-pedal.6"
+#define COMMA_VERSION "0.7.4-GM-0.2"

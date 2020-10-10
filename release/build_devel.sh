@@ -58,8 +58,8 @@ git clean -xdf
 
 # subtrees to make updates more reliable. updating them needs a clean tree
 add_subtree "cereal" "cereal" master
-add_subtree "panda" "panda" master-pedal
-add_subtree "opendbc" "opendbc" master-pedal
+add_subtree "panda" "panda" master
+add_subtree "opendbc" "opendbc" master
 add_subtree "openpilot-pyextra" "pyextra" master
 
 # leave .git alone

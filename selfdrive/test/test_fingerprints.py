@@ -2,13 +2,13 @@
 import os
 import sys
 from common.basedir import BASEDIR
+from selfdrive.car.fingerprints import IGNORED_FINGERPRINTS
 
 # messages reserved for CAN based ignition (see can_ignition_hook function in panda/board/drivers/can)
 # (addr, len)
 CAN_IGNITION_MSGS = {
   'gm': [(0x1F1, 8), (0x160, 5)],
   'tesla' : [(0x348, 8)],
-  'volkswagen' : [(0x3C0, 4)],
 }
 
 def _get_fingerprints():
@@ -66,6 +66,9 @@ car_names = []
 brand_names = []
 for brand in fingerprints:
   for car in fingerprints[brand]:
+    if car in IGNORED_FINGERPRINTS:
+      continue
+
     fingerprints_flat += fingerprints[brand][car]
     for i in range(len(fingerprints[brand][car])):
       car_names.append(car)
@@ -78,6 +81,10 @@ valid = True
 for idx1, f1 in enumerate(fingerprints_flat):
   for idx2, f2 in enumerate(fingerprints_flat):
     if idx1 < idx2 and not check_fingerprint_consistency(f1, f2):
+      if car_names[idx1] == car_names[idx2]:
+        print(f"Warning, overlap in {car_names[idx1]}")
+        continue
+
       valid = False
       print("Those two fingerprints are inconsistent {0} {1}".format(car_names[idx1], car_names[idx2]))
       print("")

@@ -37,7 +37,7 @@ if [ ! -d "$TARGET_DIR" ]; then
     mkdir -p $TARGET_DIR
     cd $TARGET_DIR
     git init
-    git remote add origin jshuler@gmail.com:jasonjshuler/openpilot.git
+    git remote add origin git@github.com:jasonjshuler/openpilot.git
 fi
 
 

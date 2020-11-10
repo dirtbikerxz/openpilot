@@ -256,7 +256,7 @@ static void ui_draw_track(UIState *s, bool is_mpc, track_vertices_data *pvd) {
     // Draw colored MPC track
     const uint8_t *clr = bg_colors[s->status];
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
-      nvgRGBA(clr[0], clr[1], clr[2], 255), nvgRGBA(clr[0], clr[1], clr[2], 255/2));
+      nvgRGBA(17, 113, 255, 255), nvgRGBA(17, 113, 255, 255/2));
   } else {
     // Draw white vision track
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
@@ -369,6 +369,7 @@ static void ui_draw_vision_lanes(UIState *s) {
     update_all_lane_lines_data(s, scene->model.right_lane, pvd + MODEL_LANE_PATH_CNT);
     s->model_changed = false;
   }
+  
   // Draw left lane edge
   ui_draw_lane(
       s, &scene->model.left_lane,
@@ -380,6 +381,7 @@ static void ui_draw_vision_lanes(UIState *s) {
       s, &scene->model.right_lane,
       pvd + MODEL_LANE_PATH_CNT,
       nvgRGBAf(1.0, 1.0, 1.0, scene->model.right_lane.prob));
+  
 
   if(s->livempc_or_radarstate_changed) {
     update_all_track_data(s);
@@ -450,55 +452,55 @@ static void ui_draw_vision_maxspeed(UIState *s) {
   viz_maxspeed_xo = 0;
 #endif
 
-  // Draw Background
-  nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, 30);
-  if (is_set_over_limit) {
-    nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 180));
-  } else {
-    nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 100));
-  }
-  nvgFill(s->vg);
+  // // Draw Background
+  // nvgBeginPath(s->vg);
+  // nvgRoundedRect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, 30);
+  // if (is_set_over_limit) {
+  //   nvgFillColor(s->vg, nvgRGBA(218, 111, 37, 180));
+  // } else {
+  //   nvgFillColor(s->vg, nvgRGBA(0, 0, 0, 100));
+  // }
+  // nvgFill(s->vg);
 
-  // Draw Border
-  nvgBeginPath(s->vg);
-  nvgRoundedRect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, 20);
-  if (is_set_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(218, 111, 37, 255));
-  } else if (is_speedlim_valid && !s->is_ego_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 255));
-  } else if (is_speedlim_valid && s->is_ego_over_limit) {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 20));
-  } else {
-    nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 100));
-  }
-  nvgStrokeWidth(s->vg, 10);
-  nvgStroke(s->vg);
+  // // Draw Border
+  // nvgBeginPath(s->vg);
+  // nvgRoundedRect(s->vg, viz_maxspeed_x, viz_maxspeed_y, viz_maxspeed_w, viz_maxspeed_h, 20);
+  // if (is_set_over_limit) {
+  //   nvgStrokeColor(s->vg, nvgRGBA(218, 111, 37, 255));
+  // } else if (is_speedlim_valid && !s->is_ego_over_limit) {
+  //   nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 255));
+  // } else if (is_speedlim_valid && s->is_ego_over_limit) {
+  //   nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 20));
+  // } else {
+  //   nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 100));
+  // }
+  // nvgStrokeWidth(s->vg, 10);
+  // nvgStroke(s->vg);
 
-  // Draw "MAX" Text
-  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
-  nvgFontFace(s->vg, "sans-regular");
-  nvgFontSize(s->vg, 26*2.5);
-  if (is_cruise_set) {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
-  } else {
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
-  }
-  nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 148, "MAX", NULL);
+  // // Draw "MAX" Text
+  // nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+  // nvgFontFace(s->vg, "sans-regular");
+  // nvgFontSize(s->vg, 26*2.5);
+  // if (is_cruise_set) {
+  //   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+  // } else {
+  //   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+  // }
+  // nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 148, "MAX", NULL);
 
-  // Draw Speed Text
-  nvgFontFace(s->vg, "sans-bold");
-  nvgFontSize(s->vg, 48*2.5);
-  if (is_cruise_set) {
-    snprintf(maxspeed_str, sizeof(maxspeed_str), "%d", maxspeed_calc);
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
-    nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, maxspeed_str, NULL);
-  } else {
-    nvgFontFace(s->vg, "sans-semibold");
-    nvgFontSize(s->vg, 42*2.5);
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
-    nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, "N/A", NULL);
-  }
+  // // Draw Speed Text
+  // nvgFontFace(s->vg, "sans-bold");
+  // nvgFontSize(s->vg, 48*2.5);
+  // if (is_cruise_set) {
+  //   snprintf(maxspeed_str, sizeof(maxspeed_str), "%d", maxspeed_calc);
+  //   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 255));
+  //   nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, maxspeed_str, NULL);
+  // } else {
+  //   nvgFontFace(s->vg, "sans-semibold");
+  //   nvgFontSize(s->vg, 42*2.5);
+  //   nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+  //   nvgText(s->vg, viz_maxspeed_x+(viz_maxspeed_xo/2)+(viz_maxspeed_w/2), 242, "N/A", NULL);
+  // }
 
 }
 
@@ -585,6 +587,53 @@ static void ui_draw_vision_speedlimit(UIState *s) {
     nvgFontSize(s->vg, 42*2.5);
     nvgText(s->vg, viz_speedlim_x+viz_speedlim_w/2, viz_speedlim_y + (is_speedlim_valid ? 170 : 165), "N/A", NULL);
   }
+}
+
+static void ui_draw_leadCar_speed(UIState *s) {
+  const UIScene *scene = &s->scene;
+  int ui_viz_rx = scene->ui_viz_rx;
+  int ui_viz_rw = scene->ui_viz_rw;
+  float speed = ((s->scene.v_ego) + (s->scene.lead_v_rel));
+  const int viz_speed_w = 280;
+  const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2));
+  char speed_str[32];
+	NVGcolor val_color = nvgRGBA(255, 255, 255, 255);
+  
+  nvgBeginPath(s->vg);
+  nvgRect(s->vg, viz_speed_x, box_y, viz_speed_w, header_h);
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+
+  if (s->is_metric) {
+    snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 3.6 + 0.5));
+  } else {
+    snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 2.2369363 + 0.5));
+  }
+
+  //Set Color of the Speed text based on offset
+  if((int)(s->scene.lead_v_rel) < 0) {
+    val_color = nvgRGBA(255, 188, 3, 200);
+  }
+  if((int)(s->scene.lead_v_rel) < -5) {
+    val_color = nvgRGBA(255, 0, 0, 200);
+  }
+
+  if (scene->lead_status) { //Show Lead Car MPH if Lead Car is available
+    nvgFontFace(s->vg, "sans-bold");
+    nvgFontSize(s->vg, 96*2.5);
+    nvgFillColor(s->vg, val_color);
+    nvgText(s->vg, ((viz_speed_x+viz_speed_w/2) - 750), 700, speed_str, NULL);
+  }
+
+  nvgFontFace(s->vg, "sans-regular");
+  nvgFontSize(s->vg, 90);
+  nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+
+  if (s->is_metric) {
+    nvgText(s->vg, ((viz_speed_x+viz_speed_w/2) - 750), 780, "kph", NULL);
+  } else {
+    nvgText(s->vg, ((viz_speed_x+viz_speed_w/2) - 750), 780, "Lead Car", NULL);
+  }
+  
 }
 
 static void ui_draw_vision_speed(UIState *s) {
@@ -747,8 +796,9 @@ static void ui_draw_vision_header(UIState *s) {
 #ifdef SHOW_SPEEDLIMIT
   ui_draw_vision_speedlimit(s);
 #endif
-  ui_draw_vision_speed(s);
-  ui_draw_vision_event(s);
+  ui_draw_leadCar_speed(s);
+  // ui_draw_vision_speed(s);
+  // ui_draw_vision_event(s);
 }
 
 static void ui_draw_vision_footer(UIState *s) {

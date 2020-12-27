@@ -166,29 +166,29 @@ ALERTS = [
 
   Alert(
       "startup",
-      "Be ready to take over at any time",
-      "Always keep hands on wheel and eyes on road",
+      "ChevyPilot Initialized",
+      "Fingerprint Recognized",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
 
   Alert(
       "startupMaster",
       "WARNING: This branch is not tested",
-      "Always keep hands on wheel and eyes on road",
+      "",
       AlertStatus.userPrompt, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
 
   Alert(
       "startupNoControl",
       "Dashcam mode",
-      "Always keep hands on wheel and eyes on road",
+      "",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
 
   Alert(
       "startupNoCar",
-      "Dashcam mode with unsupported car",
-      "Always keep hands on wheel and eyes on road",
+      "Dashcam mode, car not recognized",
+      "", 
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., 15.),
 
@@ -201,7 +201,7 @@ ALERTS = [
 
   Alert(
       "steerTempUnavailableNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Steering Temporarily Unavailable",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 0., 3.),
@@ -264,84 +264,84 @@ ALERTS = [
   # Non-entry only alerts
   Alert(
       "wrongCarModeNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Main Switch Off",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 0., 3.),
 
   Alert(
       "dataNeededNoEntry",
-      "openpilot Unavailable",
-      "Data Needed for Calibration. Upload Drive, Try Again",
+      "ChevyPilot Unavailable",
+      "Data Needed for Calibration. Calibrate Drive, Try Again",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 0., 3.),
 
   Alert(
       "outOfSpaceNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Out of Storage Space",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 0., 3.),
 
   Alert(
       "pedalPressedNoEntry",
-      "openpilot Unavailable",
-      "Pedal Pressed During Attempt",
+      "ChevyPilot Unavailable",
+      "Brake Pedal Pressed During Attempt",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, "brakePressed", AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "speedTooLowNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Speed Too Low",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "brakeHoldNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Brake Hold Active",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "parkBrakeNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Park Brake Engaged",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "lowSpeedLockoutNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Cruise Fault: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "lowBatteryNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Low Battery",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "sensorDataInvalidNoEntry",
-      "openpilot Unavailable",
-      "No Data from Device Sensors",
+      "ChevyPilot Unavailable",
+      "No Data from Device Sensors, restart device",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "soundsUnavailableNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Speaker not found",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "tooDistractedNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Distraction Level Too High",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
@@ -435,7 +435,7 @@ ALERTS = [
   Alert(
       "lowMemory",
       "TAKE CONTROL IMMEDIATELY",
-      "Low Memory: Reboot Your Device",
+      "Low Memory: Reboot Device",
       AlertStatus.critical, AlertSize.full,
       Priority.MID, VisualAlert.steerRequired, AudibleAlert.chimeWarningRepeat, .1, 2., 2.),
 
@@ -506,14 +506,14 @@ ALERTS = [
   # not loud cancellations (user is in control)
   Alert(
       "noTarget",
-      "openpilot Canceled",
+      "ChevyPilot Canceled",
       "No close lead car",
       AlertStatus.normal, AlertSize.mid,
       Priority.HIGH, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
 
   Alert(
       "speedTooLow",
-      "openpilot Canceled",
+      "ChevyPilot Canceled",
       "Speed too low",
       AlertStatus.normal, AlertSize.mid,
       Priority.HIGH, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
@@ -521,169 +521,169 @@ ALERTS = [
   # Cancellation alerts causing non-entry
   Alert(
       "overheatNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "System overheated",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "wrongGearNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Gear not D",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "calibrationInvalidNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Calibration Invalid: Reposition Device and Recalibrate",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "calibrationIncompleteNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Calibration in Progress",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "doorOpenNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Door open",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "seatbeltNotLatchedNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Seatbelt unlatched",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "espDisabledNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "ESP Off",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "geofenceNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Not in Geofenced Area",
       AlertStatus.normal, AlertSize.mid,
       Priority.MID, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "radarCanErrorNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Radar Error: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "radarFaultNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Radar Error: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "posenetInvalidNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Vision Model Output Uncertain",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "controlsFailedNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Controls Failed",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "canErrorNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "CAN Error: Check Connections",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "steerUnavailableNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "LKAS Fault: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "brakeUnavailableNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Cruise Fault: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "gasUnavailableNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Gas Error: Restart the Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "reverseGearNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Reverse Gear",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "cruiseDisabledNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Cruise is Off",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "noTargetNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "No Close Lead Car",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "plannerErrorNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Planner Solution Error",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeError, .4, 2., 3.),
 
   Alert(
       "commIssueNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Communication Issue between Processes",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
 
   Alert(
       "radarCommIssueNoEntry",
-      "openpilot Unavailable",
+      "ChevyPilot Unavailable",
       "Radar Communication Issue",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
 
   Alert(
       "internetConnectivityNeededNoEntry",
-      "openpilot Unavailable",
-      "Please Connect to Internet",
+      "ChevyPilot Unavailable",
+      "Network",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
 
   Alert(
       "lowMemoryNoEntry",
-      "openpilot Unavailable",
-      "Low Memory: Reboot Your Device",
+      "ChevyPilot Unavailable",
+      "Low Memory: Reboot Device",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOW, VisualAlert.none, AudibleAlert.chimeDisengage, .4, 2., 3.),
 
@@ -740,21 +740,21 @@ ALERTS = [
   Alert(
       "sensorDataInvalidPermanent",
       "No Data from Device Sensors",
-      "Reboot your Device",
+      "Reboot Device",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
 
   Alert(
       "soundsUnavailablePermanent",
       "Speaker not found",
-      "Reboot your Device",
+      "Reboot Device",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
 
   Alert(
       "lowMemoryPermanent",
       "RAM Critically Low",
-      "Reboot your Device",
+      "Reboot Device",
       AlertStatus.normal, AlertSize.mid,
       Priority.LOWER, VisualAlert.none, AudibleAlert.none, 0., 0., .2),
 

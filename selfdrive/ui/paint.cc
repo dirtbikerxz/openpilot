@@ -648,7 +648,7 @@ static void ui_draw_leadCar_speed(UIState *s) {
   if (scene->lead_status) {
     nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
   }else{
-    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 100));
+    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 50));
   }  
 
   nvgText(s->vg, (ui_viz_rx + 100 + (bdr_s * 2)), 780, "Lead Car", NULL);
@@ -780,7 +780,8 @@ static void ui_draw_vision_face(UIState *s) {
   const int face_img_x = (face_x - (face_img_size / 2));
   const int face_img_y = (face_y - (face_size / 4));
   float face_img_alpha = scene->monitoring_active ? 1.0f : 0.15f;
-  float face_bg_alpha = scene->monitoring_active ? 0.3f : 0.1f;
+  float face_bg_alpha = 0.0f;
+  // float face_bg_alpha = scene->monitoring_active ? 0.3f : 0.1f;
 
   if (scene->monitoring_active){
     NVGcolor face_bg = nvgRGBA(0, 0, 0, (255 * face_bg_alpha));
@@ -835,7 +836,6 @@ static void ui_draw_vision_header(UIState *s) {
   ui_draw_vision_speedlimit(s);
 #endif
   ui_draw_leadCar_speed(s);
-  // ui_draw_vision_speedlimit(s);
   // ui_draw_vision_maxspeed(s);
   // ui_draw_vision_speed(s);
   // ui_draw_vision_event(s);

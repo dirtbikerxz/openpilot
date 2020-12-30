@@ -5,6 +5,8 @@
 #include <assert.h>
 #include <sys/mman.h>
 #include <sys/resource.h>
+#include <iostream>
+#include <fstream>
 
 #include <czmq.h>
 
@@ -846,7 +848,11 @@ int main(int argc, char* argv[]) {
     smooth_brightness = clipped_brightness * 0.01 + smooth_brightness * 0.99;
     if (smooth_brightness > 255) smooth_brightness = 255;
     //set_brightness(s, (int)smooth_brightness);
-    set_brightness(s, 255);
+    std::ifstream file;
+    file.open("brightness.txt");
+    int bright;
+    file >> bright;
+    set_brightness(s, bright);
 
     if (!s->vision_connected) {
       // Car is not started, keep in idle state and awake on touch events

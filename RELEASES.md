@@ -1,3 +1,7 @@
+Version 0.7.4 (2020-12-27)
+========================
+ * Chevypilot!
+
 Version 0.7.4 (2020-xx-xx)
 ========================
  * Support for Honda Insight thanks to theantihero!

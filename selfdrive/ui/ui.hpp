@@ -52,11 +52,11 @@ const int nav_w = 640;
 const int nav_ww= 760;
 const int sbr_w = 300;
 const int bdr_s = 30;
-const int box_x = sbr_w+bdr_s;
-const int box_y = bdr_s;
-const int box_w = vwp_w-sbr_w-(bdr_s*2);
-const int box_h = vwp_h-(bdr_s*2);
-const int viz_w = vwp_w-(bdr_s*2);
+const int box_x = 240; //sbr_w+bdr_s;
+const int box_y = 0; //bdr_s;
+const int box_w = 1920; //-sbr_w-(bdr_s*2);
+const int box_h = vwp_h; //-(bdr_s*2);
+const int viz_w = 1920; //vwp_w-(bdr_s*2);
 const int header_h = 420;
 const int footer_h = 280;
 const int footer_y = vwp_h-bdr_s-footer_h;
@@ -167,6 +167,7 @@ typedef struct UIState {
   int img_wheel;
   int img_turn;
   int img_face;
+  int img_face_active;
   int img_map;
 
   // sockets

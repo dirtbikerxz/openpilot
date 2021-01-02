@@ -1,7 +1,7 @@
 {
-  "ota_url": "https://commadist.azureedge.net/neosupdate/ota-signed-cf7a23f148489ca32ef5d8e869686f542047a012c4e71fea796d8a29a00d5e39.zip",
+  "ota_url": "https://github.com/dirtbikerxz/eon-neos/releases/download/0.7.4/ota-signed-cf7a23f148489ca32ef5d8e869686f542047a012c4e71fea796d8a29a00d5e39.zip",
   "ota_hash": "cf7a23f148489ca32ef5d8e869686f542047a012c4e71fea796d8a29a00d5e39",
-  "recovery_url": "https://commadist.azureedge.net/neosupdate/recovery-ec316babe1ef042de3e4c1c3cb27deb57bc348cd528a5ade5d750fac46a1b311.img",
+  "recovery_url": "https://github.com/dirtbikerxz/eon-neos/releases/download/0.7.4/recovery-ec316babe1ef042de3e4c1c3cb27deb57bc348cd528a5ade5d750fac46a1b311.img",
   "recovery_len": 15922476,
   "recovery_hash": "ec316babe1ef042de3e4c1c3cb27deb57bc348cd528a5ade5d750fac46a1b311"
 }

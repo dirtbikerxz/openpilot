@@ -258,9 +258,14 @@ static void ui_draw_track(UIState *s, bool is_mpc, track_vertices_data *pvd) {
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
       nvgRGBA(clr[0], clr[1], clr[2], 255), nvgRGBA(clr[0], clr[1], clr[2], 255/2));
   } else {
-    // Draw white vision track
+    // Draw white vision track or blue track
+    if (scene->engaged){
+    track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
+      nvgRGBA(17, 113, 255, 255), nvgRGBA(17, 113, 255, 255/2));
+    }else{
     track_bg = nvgLinearGradient(s->vg, vwp_w, vwp_h, vwp_w, vwp_h*.4,
       nvgRGBA(255, 255, 255, 255), nvgRGBA(255, 255, 255, 0));
+    }
   }
 
   nvgFillPaint(s->vg, track_bg);
@@ -369,17 +374,33 @@ static void ui_draw_vision_lanes(UIState *s) {
     update_all_lane_lines_data(s, scene->model.right_lane, pvd + MODEL_LANE_PATH_CNT);
     s->model_changed = false;
   }
-  // Draw left lane edge
-  ui_draw_lane(
-      s, &scene->model.left_lane,
-      pvd,
-      nvgRGBAf(1.0, 1.0, 1.0, scene->model.left_lane.prob));
+  
+  if (scene->engaged){
+    // Draw left lane edge
+    ui_draw_lane(
+        s, &scene->model.left_lane,
+        pvd,
+        nvgRGBAf(0.06, 0.44, 1.0, scene->model.left_lane.prob));
 
-  // Draw right lane edge
-  ui_draw_lane(
-      s, &scene->model.right_lane,
-      pvd + MODEL_LANE_PATH_CNT,
-      nvgRGBAf(1.0, 1.0, 1.0, scene->model.right_lane.prob));
+    // Draw right lane edge
+    ui_draw_lane(
+        s, &scene->model.right_lane,
+        pvd + MODEL_LANE_PATH_CNT,
+        nvgRGBAf(0.06, 0.44, 1.0, scene->model.right_lane.prob));
+  }else{
+    // Draw left lane edge
+    ui_draw_lane(
+        s, &scene->model.left_lane,
+        pvd,
+        nvgRGBAf(1.0, 1.0, 1.0, scene->model.left_lane.prob));
+
+    // Draw right lane edge
+    ui_draw_lane(
+        s, &scene->model.right_lane,
+        pvd + MODEL_LANE_PATH_CNT,
+        nvgRGBAf(1.0, 1.0, 1.0, scene->model.right_lane.prob));
+  }
+  
 
   if(s->livempc_or_radarstate_changed) {
     update_all_track_data(s);
@@ -587,6 +608,53 @@ static void ui_draw_vision_speedlimit(UIState *s) {
   }
 }
 
+static void ui_draw_leadCar_speed(UIState *s) {
+  const UIScene *scene = &s->scene;
+  int ui_viz_rx = scene->ui_viz_rx;
+  int ui_viz_rw = scene->ui_viz_rw;
+  float speed = ((s->scene.lead_v_rel)); //(s->scene.v_ego) + 
+  const int viz_speed_w = 280;
+  const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2)); 
+  char speed_str[32];
+	NVGcolor val_color = nvgRGBA(255, 255, 255, 255);
+  
+  nvgBeginPath(s->vg);
+  nvgRect(s->vg, viz_speed_x, box_y, viz_speed_w, header_h);
+  nvgTextAlign(s->vg, NVG_ALIGN_CENTER | NVG_ALIGN_BASELINE);
+
+  if (speed > 0) {
+    snprintf(speed_str, sizeof(speed_str), "+%d", (int)(speed * 2.2369363 + 0.5));
+  } else {
+    snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 2.2369363 + 0.5));
+  }
+
+  //Set Color of the Speed text based on offset
+  if((int)(s->scene.lead_v_rel) < 0) {
+    val_color = nvgRGBA(255, 188, 3, 200);
+  }
+  if((int)(s->scene.lead_v_rel) < -5) {
+    val_color = nvgRGBA(255, 0, 0, 200);
+  }
+
+  if (scene->lead_status) { //Show Lead Car MPH if Lead Car is available
+    nvgFontFace(s->vg, "sans-bold");
+    nvgFontSize(s->vg, 96*2.5);
+    nvgFillColor(s->vg, val_color);
+    nvgText(s->vg, (ui_viz_rx + 100 + (bdr_s * 2)), 700, speed_str, NULL);
+  }
+
+  nvgFontFace(s->vg, "sans-regular");
+  nvgFontSize(s->vg, 90);
+  if (scene->lead_status) {
+    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 200));
+  }else{
+    nvgFillColor(s->vg, nvgRGBA(255, 255, 255, 50));
+  }  
+
+  nvgText(s->vg, (ui_viz_rx + 100 + (bdr_s * 2)), 780, "Lead Car", NULL);
+  
+}
+
 static void ui_draw_vision_speed(UIState *s) {
   const UIScene *scene = &s->scene;
   int ui_viz_rx = scene->ui_viz_rx;
@@ -712,20 +780,41 @@ static void ui_draw_vision_face(UIState *s) {
   const int face_img_x = (face_x - (face_img_size / 2));
   const int face_img_y = (face_y - (face_size / 4));
   float face_img_alpha = scene->monitoring_active ? 1.0f : 0.15f;
-  float face_bg_alpha = scene->monitoring_active ? 0.3f : 0.1f;
-  NVGcolor face_bg = nvgRGBA(0, 0, 0, (255 * face_bg_alpha));
-  NVGpaint face_img = nvgImagePattern(s->vg, face_img_x, face_img_y,
+  float face_bg_alpha = 0.0f;
+  // float face_bg_alpha = scene->monitoring_active ? 0.3f : 0.1f;
+
+  if (scene->monitoring_active){
+    NVGcolor face_bg = nvgRGBA(0, 0, 0, (255 * face_bg_alpha));
+    NVGpaint face_img = nvgImagePattern(s->vg, face_img_x, face_img_y,
+    face_img_size, face_img_size, 0, s->img_face_active, face_img_alpha);
+    
+    nvgBeginPath(s->vg);
+    nvgCircle(s->vg, face_x, (face_y + (bdr_s * 1.5)), face_size);
+    nvgFillColor(s->vg, face_bg);
+    nvgFill(s->vg);
+
+    nvgBeginPath(s->vg);
+    nvgRect(s->vg, face_img_x, face_img_y, face_img_size, face_img_size);
+    nvgFillPaint(s->vg, face_img);
+    nvgFill(s->vg);
+  }
+  else{
+    NVGcolor face_bg = nvgRGBA(0, 0, 0, (255 * face_bg_alpha));
+    NVGpaint face_img = nvgImagePattern(s->vg, face_img_x, face_img_y,
     face_img_size, face_img_size, 0, s->img_face, face_img_alpha);
 
-  nvgBeginPath(s->vg);
-  nvgCircle(s->vg, face_x, (face_y + (bdr_s * 1.5)), face_size);
-  nvgFillColor(s->vg, face_bg);
-  nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgCircle(s->vg, face_x, (face_y + (bdr_s * 1.5)), face_size);
+    nvgFillColor(s->vg, face_bg);
+    nvgFill(s->vg);
 
-  nvgBeginPath(s->vg);
-  nvgRect(s->vg, face_img_x, face_img_y, face_img_size, face_img_size);
-  nvgFillPaint(s->vg, face_img);
-  nvgFill(s->vg);
+    nvgBeginPath(s->vg);
+    nvgRect(s->vg, face_img_x, face_img_y, face_img_size, face_img_size);
+    nvgFillPaint(s->vg, face_img);
+    nvgFill(s->vg);
+  }
+  
+  
 }
 
 static void ui_draw_vision_header(UIState *s) {
@@ -742,13 +831,14 @@ static void ui_draw_vision_header(UIState *s) {
   nvgRect(s->vg, ui_viz_rx, box_y, ui_viz_rw, header_h);
   nvgFill(s->vg);
 
-  ui_draw_vision_maxspeed(s);
 
 #ifdef SHOW_SPEEDLIMIT
   ui_draw_vision_speedlimit(s);
 #endif
-  ui_draw_vision_speed(s);
-  ui_draw_vision_event(s);
+  ui_draw_leadCar_speed(s);
+  // ui_draw_vision_maxspeed(s);
+  // ui_draw_vision_speed(s);
+  // ui_draw_vision_event(s);
 }
 
 static void ui_draw_vision_footer(UIState *s) {
@@ -777,7 +867,7 @@ void ui_draw_vision_alert(UIState *s, int va_size, int va_color,
 
   const uint8_t *color = alert_colors[va_color];
   const int alr_s = alert_sizes[va_size];
-  const int alr_x = ui_viz_rx-(mapEnabled?(hasSidebar?nav_w:(nav_ww)):0)-bdr_s;
+  const int alr_x = ui_viz_rx - 170;//-(mapEnabled?(hasSidebar?nav_w:(nav_ww)):0)-bdr_s;
   const int alr_w = ui_viz_rw+(mapEnabled?(hasSidebar?nav_w:(nav_ww)):0)+(bdr_s*2);
   const int alr_h = alr_s+(va_size==ALERTSIZE_NONE?0:bdr_s);
   const int alr_y = vwp_h-alr_h;
@@ -981,6 +1071,9 @@ void ui_nvg_init(UIState *s) {
 
   assert(s->img_face >= 0);
   s->img_face = nvgCreateImage(s->vg, "../assets/img_driver_face.png", 1);
+
+  assert(s->img_face_active >= 0);
+  s->img_face_active = nvgCreateImage(s->vg, "../assets/img_driver_face_active.png", 1);
 
   assert(s->img_map >= 0);
   s->img_map = nvgCreateImage(s->vg, "../assets/img_map.png", 1);

@@ -194,12 +194,14 @@ static void ui_init_vision(UIState *s, const VisionStreamBufs back_bufs,
 
   read_param_float(&s->speed_lim_off, "SpeedLimitOffset");
   read_param_bool(&s->is_metric, "IsMetric");
+  read_param_bool(&s->is_autoBright, "RecordFront");
   read_param_bool(&s->longitudinal_control, "LongitudinalControl");
   read_param_bool(&s->limit_set_speed, "LimitSetSpeed");
 
   // Set offsets so params don't get read at the same time
   s->longitudinal_control_timeout = UI_FREQ / 3;
   s->is_metric_timeout = UI_FREQ / 2;
+  s->is_autoBright_timeout = UI_FREQ / 4;
   s->limit_set_speed_timeout = UI_FREQ;
 }
 
@@ -849,17 +851,29 @@ int main(int argc, char* argv[]) {
     if (smooth_brightness > 255) smooth_brightness = 255;
     //set_brightness(s, (int)smooth_brightness);
     
-    //get brightness from file
-    std::ifstream file;
-    file.open("brightness.txt");
-    int bright;
-    file >> bright;
-    if (bright == 0){
+    if (s->is_autoBright) {
       set_brightness(s, (int)smooth_brightness);
     }
     else{
+      //get brightness from file
+      std::ifstream file;
+      file.open("brightness.txt");
+      int bright;
+      file >> bright;
       set_brightness(s, bright);
-    }    
+    }
+
+    // //get brightness from file
+    // std::ifstream file;
+    // file.open("brightness.txt");
+    // int bright;
+    // file >> bright;
+    // if (bright == 0){
+    //   set_brightness(s, (int)smooth_brightness);
+    // }
+    // else{
+    //   set_brightness(s, bright);
+    // }    
     
 
     if (!s->vision_connected) {
@@ -949,6 +963,7 @@ int main(int argc, char* argv[]) {
     }
 
     read_param_bool_timeout(&s->is_metric, "IsMetric", &s->is_metric_timeout);
+    read_param_bool_timeout(&s->is_autoBright, "RecordFront", &s->is_autoBright_timeout);
     read_param_bool_timeout(&s->longitudinal_control, "LongitudinalControl", &s->longitudinal_control_timeout);
     read_param_bool_timeout(&s->limit_set_speed, "LimitSetSpeed", &s->limit_set_speed_timeout);
     read_param_float_timeout(&s->speed_lim_off, "SpeedLimitOffset", &s->limit_set_speed_timeout);

@@ -95,7 +95,7 @@ void encoder_thread(bool is_streaming, bool raw_clips, bool front) {
 
   if (front) {
     char *value;
-    const int result = read_db_value(NULL, "RecordFront", &value, NULL);
+    const int result = 0;
     if (result != 0) return;
     if (value[0] != '1') { free(value); return; }
     free(value);

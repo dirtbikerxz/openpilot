@@ -612,7 +612,7 @@ static void ui_draw_leadCar_speed(UIState *s) {
   const UIScene *scene = &s->scene;
   int ui_viz_rx = scene->ui_viz_rx;
   int ui_viz_rw = scene->ui_viz_rw;
-  float speed = ((s->scene.lead_v_rel)); //(s->scene.v_ego) + 
+  float speed = ((s->scene.lead_v_rel)); //(s->scene.v_ego) +
   const int viz_speed_w = 280;
   const int viz_speed_x = ui_viz_rx+((ui_viz_rw/2)-(viz_speed_w/2)); 
   char speed_str[32];
@@ -655,6 +655,102 @@ static void ui_draw_leadCar_speed(UIState *s) {
   
 }
 
+static void ui_draw_pedal_indicators(UIState *s) {
+  const UIScene *scene = &s->scene;
+  float speed = s->scene.gasPedal;
+  float brake = s->scene.brakePedal;
+  if (brake > 0.5){
+    brake = 0.5;
+  }
+
+  int gas_x = 1850;
+  int gas_y = 670;
+  int gas_w = 40;
+  int gas_h = 400;
+
+  int brake_x = 1800;
+  int brake_y = 670;
+  int brake_w = 40;
+  int brake_h = 400;
+
+  int gasBar = (int)(gas_h * speed);
+  int brakeBar = (int)(brake_h * (brake / 0.5));
+
+  // Draw Gas Bar
+  nvgBeginPath(s->vg);
+  nvgRoundedRect(s->vg, gas_x, (gas_y + (gas_h - gasBar)), gas_w, gasBar, 0);
+  nvgFillColor(s->vg, nvgRGBA(50, 168, 82, 255));
+  nvgFill(s->vg);
+
+  // Draw Gas Border
+  nvgBeginPath(s->vg);
+  nvgRoundedRect(s->vg, gas_x, gas_y, gas_w, gas_h, 0);
+  nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 90));
+  nvgStrokeWidth(s->vg, 10);
+  nvgStroke(s->vg);
+
+  // Draw Brake Bar
+  nvgBeginPath(s->vg);
+  nvgRoundedRect(s->vg, brake_x, (brake_y + (brake_h - brakeBar)), brake_w, brakeBar, 0);
+  nvgFillColor(s->vg, nvgRGBA(252, 42, 3, 255));
+  nvgFill(s->vg);
+
+  // Draw Brake Border
+  nvgBeginPath(s->vg);
+  nvgRoundedRect(s->vg, brake_x, brake_y, brake_w, brake_h, 0);
+  nvgStrokeColor(s->vg, nvgRGBA(255, 255, 255, 90));
+  nvgStrokeWidth(s->vg, 10);
+  nvgStroke(s->vg);
+}
+
+int jankyTimer = 0;
+static void ui_draw_blinkers(UIState *s) {
+  const UIScene *scene = &s->scene;
+  bool leftBlinker = s->scene.leftBlinker;
+  bool rightBlinker = s->scene.rightBlinker;
+  jankyTimer++;
+
+  int leftBlinker_x = 300;
+  int leftBlinker_y = 150;
+  int leftBlinker_w = 144;
+  int leftBlinker_h = 144;
+
+  int rightBlinker_x = 1920 - 300 - 144;
+  int rightBlinker_y = 150;
+  int rightBlinker_w = 144;
+  int rightBlinker_h = 144;
+
+  // Left Blinker
+  NVGpaint leftBlinker_img = nvgImagePattern(s->vg, leftBlinker_x, leftBlinker_y,
+  leftBlinker_w, leftBlinker_h, 0, s->img_left_blinker, 255);  
+  leftBlinker_img.innerColor = nvgRGBA(50, 168, 82, 255);
+
+  // Right Blinker
+  NVGpaint rightBlinker_img = nvgImagePattern(s->vg, rightBlinker_x, rightBlinker_y,
+  rightBlinker_w, rightBlinker_h, 0, s->img_right_blinker, 255);  
+  rightBlinker_img.innerColor = nvgRGBA(50, 168, 82, 255);
+
+  if (!leftBlinker && !rightBlinker){
+    jankyTimer = 0;
+  }
+  if ((jankyTimer % 24) < 12){
+    if (leftBlinker){
+      nvgBeginPath(s->vg);
+      nvgRect(s->vg, leftBlinker_x, leftBlinker_y, leftBlinker_w, leftBlinker_h);
+      nvgFillPaint(s->vg, leftBlinker_img);
+      nvgFill(s->vg);
+    }
+    if (rightBlinker){
+      nvgBeginPath(s->vg);
+      nvgRect(s->vg, rightBlinker_x, rightBlinker_y, rightBlinker_w, rightBlinker_h);
+      nvgFillPaint(s->vg, rightBlinker_img);
+      nvgFill(s->vg);
+    }
+  }
+
+  
+}
+
 static void ui_draw_vision_speed(UIState *s) {
   const UIScene *scene = &s->scene;
   int ui_viz_rx = scene->ui_viz_rx;
@@ -672,7 +768,7 @@ static void ui_draw_vision_speed(UIState *s) {
   if (s->is_metric) {
     snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 3.6 + 0.5));
   } else {
-    snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 2.2369363 + 0.5));
+    snprintf(speed_str, sizeof(speed_str), "%d", (int)(speed * 2.2369363 + 0.5)); 
   }
   nvgFontFace(s->vg, "sans-bold");
   nvgFontSize(s->vg, 96*2.5);
@@ -839,6 +935,8 @@ static void ui_draw_vision_header(UIState *s) {
   // ui_draw_vision_maxspeed(s);
   // ui_draw_vision_speed(s);
   // ui_draw_vision_event(s);
+  ui_draw_pedal_indicators(s);
+  ui_draw_blinkers(s);
 }
 
 static void ui_draw_vision_footer(UIState *s) {
@@ -1074,6 +1172,12 @@ void ui_nvg_init(UIState *s) {
 
   assert(s->img_face_active >= 0);
   s->img_face_active = nvgCreateImage(s->vg, "../assets/img_driver_face_active.png", 1);
+
+  assert(s->img_left_blinker >= 0);
+  s->img_left_blinker = nvgCreateImage(s->vg, "../assets/img_left_blinker.png", 1);
+
+  assert(s->img_right_blinker >= 0);
+  s->img_right_blinker = nvgCreateImage(s->vg, "../assets/img_right_blinker.png", 1);
 
   assert(s->img_map >= 0);
   s->img_map = nvgCreateImage(s->vg, "../assets/img_map.png", 1);

@@ -96,6 +96,11 @@ typedef struct UIScene {
   uint64_t v_cruise_update_ts;
   float v_ego;
   bool decel_for_model;
+  float gasPedal;
+  float brakePedal;
+
+  bool leftBlinker;
+  bool rightBlinker;
 
   float speedlimit;
   bool speedlimit_valid;
@@ -169,6 +174,8 @@ typedef struct UIState {
   int img_face;
   int img_face_active;
   int img_map;
+  int img_left_blinker;
+  int img_right_blinker;
 
   // sockets
   Context *ctx;
@@ -178,6 +185,7 @@ typedef struct UIState {
   SubSocket *radarstate_sock;
   SubSocket *map_data_sock;
   SubSocket *uilayout_sock;
+  SubSocket *carstate_sock;  
   Poller * poller;
 
   int active_app;
